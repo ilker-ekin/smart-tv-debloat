@@ -1,4 +1,4 @@
-# Pester 5+ tests for scripts/tv-debloat.ps1. Never touches a real TV:
+# Pester 5+ tests for scripts/tv-debloat.ps1 and scripts/privacy-audit.ps1. Never touches a real TV:
 # tests/mock-adb is put first on PATH and every adb call is logged.
 #   Invoke-Pester tests/tv-debloat.Tests.ps1 -Output Detailed
 
@@ -6,6 +6,9 @@ BeforeAll {
     $Repo = Split-Path -Parent $PSScriptRoot
     $Script = Join-Path $Repo 'scripts\tv-debloat.ps1'
     $MockDir = Join-Path $Repo 'tests\mock-adb'
+    $Audit = Join-Path $Repo 'scripts\privacy-audit.ps1'
+    # Every call the privacy audit may make. Anything else means it is not read-only.
+    $ReadOnly = '^(connect \S+|devices|-s \S+ shell (getprop|settings get|dumpsys|pm list|cmd appops query-op) .*)$'
     $Mutating = '(pm uninstall|pm disable-user|pm enable|install-existing|settings put|settings delete|reboot)'
 
     # Runs the script in a child Windows PowerShell / pwsh with the mock adb.
@@ -209,3 +212,41 @@ Describe '-List' {
     }
 }
 
+Describe 'privacy audit' {
+    It 'only makes read-only adb calls' {
+        $r = Invoke-Debloat -ScriptPath $Audit -ScriptArgs @('192.168.1.50') -MockEnv @{ MOCK_ADB_SETTINGS = 'settings-flagged.txt'; MOCK_ADB_APPOPS = 'appops-record-audio-flagged.txt' }
+        $r.Code | Should -Be 0
+        $r.Log.Count | Should -BeGreaterThan 10
+        @($r.Log | Where-Object { $_ -notmatch $ReadOnly }) | Should -BeNullOrEmpty
+    }
+    It 'reads the reference TV as clean and explains the -225d timestamp in words' {
+        $r = Invoke-Debloat -ScriptPath $Audit -ScriptArgs @('192.168.1.50') -MockEnv @{ MOCK_ADB_SETTINGS = 'settings-reference.txt' }
+        $r.Out | Should -Match 'OK\s+microphone\s+com\.google\.android\.katniss \(voice search, allow\): last used 225 days, 21 hours ago'
+        $r.Out | Should -Match 'OK\s+accessibility'
+        $r.Out | Should -Match 'OK\s+location\s+location is off'
+        $r.Out | Should -Match 'WARN\s+debugging'
+        $r.Out | Should -Not -Match '(?m)^REVIEW'
+    }
+    It 'flags an unknown app using the mic and other red flags' {
+        $r = Invoke-Debloat -ScriptPath $Audit -ScriptArgs @('192.168.1.50') -MockEnv @{ MOCK_ADB_SETTINGS = 'settings-flagged.txt'; MOCK_ADB_APPOPS = 'appops-record-audio-flagged.txt' }
+        $r.Out | Should -Match 'REVIEW\s+microphone\s+com\.example\.spy is not a known voice app.*last used 2 hours, 5 min ago'
+        $r.Out | Should -Match 'REVIEW\s+accessibility\s+enabled: com\.example\.spy'
+        $r.Out | Should -Match 'REVIEW\s+notifications'
+        $r.Out | Should -Match 'REVIEW\s+location\s+location is on \(mode 3\)'
+    }
+    It 'parses CRLF output the same way' {
+        $r = Invoke-Debloat -ScriptPath $Audit -ScriptArgs @('192.168.1.50') -MockEnv @{ MOCK_ADB_SETTINGS = 'settings-reference.txt'; MOCK_ADB_CRLF = '1' }
+        $r.Out | Should -Match 'last used 225 days, 21 hours ago'
+        $r.Out | Should -Match 'OK\s+location\s+location is off'
+    }
+    It 'writes the report into reports\' {
+        $r = Invoke-Debloat -ScriptPath $Audit -ScriptArgs @('192.168.1.50')
+        @(Get-ChildItem (Join-Path $r.Dir 'reports') -Filter '*-privacy.txt').Count | Should -Be 1
+    }
+    It 'is reachable through tv-debloat.ps1 -Privacy' {
+        $r = Invoke-Debloat -ScriptArgs @('192.168.1.50', '-Privacy')
+        $r.Code | Should -Be 0
+        $r.Out | Should -Match '===== FINDINGS ====='
+        @($r.Log | Where-Object { $_ -notmatch $ReadOnly }) | Should -BeNullOrEmpty
+    }
+}

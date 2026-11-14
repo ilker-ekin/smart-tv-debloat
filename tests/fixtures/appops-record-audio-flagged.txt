@@ -1,0 +1,12 @@
+Current AppOps Service state:
+  Uid 10045:
+    state=cch
+    RECORD_AUDIO: mode=foreground
+    Package com.google.android.katniss:
+      RECORD_AUDIO (allow):
+        Access: [fg-s] 2026-01-01 00:00:00.000 (-225d21h26m3s120ms) duration=+4s210ms
+  Uid 10099:
+    state=bg
+    Package com.example.spy:
+      RECORD_AUDIO (allow):
+        Access: [bg-s] 2026-11-13 09:00:00.000 (-2h5m10s0ms) duration=+30m0s0ms

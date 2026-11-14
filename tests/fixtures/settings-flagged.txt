@@ -1,0 +1,5 @@
+# SYNTHETIC: red flags for testing the findings. Not from a real TV.
+secure enabled_accessibility_services=com.example.spy/com.example.spy.ScreenReaderService
+secure enabled_notification_listeners=com.example.spy/com.example.spy.NotifService
+secure location_mode=3
+global adb_enabled=1

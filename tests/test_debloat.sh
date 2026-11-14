@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Tests for scripts/tv-debloat.sh. Plain bash (no bats needed), bash 3.2 compatible.
+# Tests for scripts/tv-debloat.sh and scripts/privacy-audit.sh. Plain bash (no bats needed), bash 3.2 compatible.
 # Never touches a real TV: tests/mock-adb is put first on PATH and every call is logged.
 #   bash tests/test_debloat.sh            # all tests
 #   bash tests/test_debloat.sh restore    # only tests whose name contains "restore"
@@ -10,6 +10,9 @@
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 SCRIPT="$REPO/scripts/tv-debloat.sh"
+AUDIT="$REPO/scripts/privacy-audit.sh"
+# Every call the privacy audit may make. Anything else means it is not read-only.
+READ_ONLY='^(connect [^ ]+|devices|-s [^ ]+ shell (getprop|settings get|dumpsys|pm list|cmd appops query-op) .*)$'
 
 MOCK_DIR="$REPO/tests/mock-adb"
 MUTATING='(pm uninstall|pm disable-user|pm enable|install-existing|settings put|settings delete|reboot)'
@@ -203,7 +206,48 @@ bad_flag() {
   check '[ -z "$LOG" ]'
 }
 
-echo "tv-debloat.sh tests (bash $BASH_VERSION)"
+audit() { RUN_SCRIPT="$AUDIT" run_debloat "$@"; }
+privacy_read_only() {
+  audit '' MOCK_ADB_SETTINGS=settings-flagged.txt MOCK_ADB_APPOPS=appops-record-audio-flagged.txt -- 192.168.1.50
+  check '[ "$CODE" = 0 ]'
+  check '[ "$(printf "%s
+" "$LOG" | wc -l | tr -d " ")" -gt 10 ]'
+  check '! printf "%s
+" "$LOG" | grep -Evq "$READ_ONLY"'
+}
+privacy_reference_clean() {
+  audit '' MOCK_ADB_SETTINGS=settings-reference.txt -- 192.168.1.50
+  check 'out_has "^OK +microphone +com\.google\.android\.katniss \(voice search, allow\): last used 225 days, 21 hours ago"'
+  check 'out_has "^OK +accessibility"'
+  check 'out_has "^OK +location +location is off"'
+  check 'out_has "^WARN +debugging"'
+  check '! out_has "^REVIEW"'
+}
+privacy_flags() {
+  audit '' MOCK_ADB_SETTINGS=settings-flagged.txt MOCK_ADB_APPOPS=appops-record-audio-flagged.txt -- 192.168.1.50
+  check 'out_has "^REVIEW +microphone +com\.example\.spy is not a known voice app.*last used 2 hours, 5 min ago"'
+  check 'out_has "^REVIEW +accessibility +enabled: com\.example\.spy"'
+  check 'out_has "^REVIEW +notifications"'
+  check 'out_has "^REVIEW +location +location is on \(mode 3\)"'
+}
+privacy_crlf() {
+  audit '' MOCK_ADB_SETTINGS=settings-reference.txt MOCK_ADB_CRLF=1 -- 192.168.1.50
+  check 'out_has "last used 225 days, 21 hours ago"'
+  check 'out_has "^OK +location +location is off"'
+}
+privacy_report_file() {
+  audit '' -- 192.168.1.50
+  check '[ "$(ls "$WORK"/reports/*-privacy.txt 2> /dev/null | wc -l | tr -d " ")" = 1 ]'
+}
+privacy_via_debloat_flag() {
+  run_debloat '' -- 192.168.1.50 --privacy
+  check '[ "$CODE" = 0 ]'
+  check 'out_has "===== FINDINGS ====="'
+  check '! printf "%s
+" "$LOG" | grep -Evq "$READ_ONLY"'
+}
+
+echo "tv-debloat.sh / privacy-audit.sh tests (bash $BASH_VERSION)"
 t "dry run makes zero mutating adb calls and writes no files" dry_run_zero_mutations
 t "denylist is enforced in code" denylist_enforced_in_code
 t "empty TSV fields don't shift columns" tsv_empty_fields_do_not_shift_columns
@@ -224,6 +268,12 @@ t "errors: unauthorized explained" err_unauthorized
 t "measure: before/after diff table" measure_before_after
 t "list works without a TV" list_without_tv
 t "bad flag value exits 2 before touching adb" bad_flag
+t "privacy: only read-only adb calls" privacy_read_only
+t "privacy: reference TV is clean, -225d explained in words" privacy_reference_clean
+t "privacy: unknown mic app and other red flags" privacy_flags
+t "privacy: CRLF output" privacy_crlf
+t "privacy: report written to reports/" privacy_report_file
+t "privacy: reachable via tv-debloat.sh --privacy" privacy_via_debloat_flag
 
 printf '\nPassed %s, Failed %s\n' "$PASS" "$FAILN"
 [ "$FAILN" = 0 ] || { printf 'Failed:%s\n' "$FAILED_NAMES"; exit 1; }

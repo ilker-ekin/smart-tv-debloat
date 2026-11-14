@@ -1,0 +1,8 @@
+# key=value for `settings get <namespace> <key>`. Missing keys print "null".
+# Values from the reference TV's audit: no accessibility services, location off.
+# adb_enabled is necessarily 1 while ADB is connected.
+secure enabled_accessibility_services=null
+secure enabled_notification_listeners=
+secure location_mode=0
+global adb_enabled=1
+global adb_wifi_enabled=1
