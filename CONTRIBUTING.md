@@ -77,7 +77,8 @@ python tools/packages.py check
 - `packages.tsv` must match `packages.yaml` exactly (always run `gen`).
 - Both scripts carry a copy of the denylist between `BEGIN DENYLIST` / `END DENYLIST`. If you change the denylist
   in the YAML, update both scripts. `check` tells you what's missing.
-- Unconfirmed behaviour is written as `TODO(device)`, never stated as fact.
+- Unconfirmed behaviour is written as `TODO(device)`, never stated as fact. Unmeasured numbers may be given as
+  `≈ value *(estimate)*`, never as a bare number.
 
 ## Development
 

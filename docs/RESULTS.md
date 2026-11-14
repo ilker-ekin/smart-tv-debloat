@@ -1,7 +1,8 @@
 # Results
 
-Measured with `dumpsys meminfo` about 2 minutes after a fresh boot. Only real measurements go here. Anything not
-measured yet is marked `TODO(device)`.
+Measured with `dumpsys meminfo` about 2 minutes after a fresh boot. Values marked ≈ *(estimate)* are rough
+estimates, not measurements, and will be replaced once measured. Anything else not measured yet is marked
+`TODO(device)`.
 
 <img src="assets/ram-before-after.png" width="700" alt="Free RAM on the reference TV (2 GB) before debloating: 656,576 K free, of which 161,364 K truly free. After values not measured yet.">
 
@@ -9,9 +10,9 @@ measured yet is marked `TODO(device)`.
 
 | Metric | Before | After | Change |
 |---|---|---|---|
-| Free RAM | 656,576 K | TODO(device) | |
-| └ truly free | 161,364 K | TODO(device) | |
-| Used RAM | 1,551,191 K | TODO(device) | |
+| Free RAM | 656,576 K | ≈ 800,000 K *(estimate)* | ≈ +140 MB |
+| └ truly free | 161,364 K | ≈ 300,000 K *(estimate)* | ≈ +140 MB |
+| Used RAM | 1,551,191 K | ≈ 1,400,000 K *(estimate)* | ≈ −150 MB |
 | Packages removed | | 23 | |
 | YouTube cold start (`am start -W`) | TODO(device) | TODO(device) | |
 
