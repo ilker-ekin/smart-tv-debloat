@@ -1,0 +1,92 @@
+name: Model report
+description: Report how debloating went on your TV model (new models especially welcome).
+title: "[model] <ro.product.name>, Android TV <version>"
+labels: ["model-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks! Reports like this are how packages get marked as verified for more models.
+
+        **Please don't post personal data:** no IP addresses, no device serials, no Google account details, and no
+        full privacy reports. Model, firmware and RAM numbers are what we need.
+  - type: input
+    id: product_name
+    attributes:
+      label: Model (`ro.product.name`)
+      description: "`adb shell getprop ro.product.name`. Not `ro.product.model`, which only says `Smart TV` on TCL."
+      placeholder: G07_4K_GB_NF
+    validations:
+      required: true
+  - type: input
+    id: fingerprint
+    attributes:
+      label: Firmware (`ro.build.fingerprint`)
+      description: "`adb shell getprop ro.build.fingerprint`"
+      placeholder: TCL/.../...:11/RP1A.200622.001/AR17:user/release-keys
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Android TV 9
+        - Android TV 10
+        - Android TV 11
+        - Android TV 12
+        - Google TV (Android 12+)
+        - Other / not sure
+    validations:
+      required: true
+  - type: input
+    id: ram
+    attributes:
+      label: RAM
+      description: The "Total RAM" line from `dumpsys meminfo`
+      placeholder: "2,097,152K"
+  - type: dropdown
+    id: method
+    attributes:
+      label: How did you debloat?
+      options:
+        - Manual walkthrough (Windows cmd)
+        - tv-debloat.ps1 (PowerShell)
+        - tv-debloat.sh (macOS / Linux / Git Bash)
+    validations:
+      required: true
+  - type: textarea
+    id: meminfo
+    attributes:
+      label: Before / after RAM
+      description: Paste the `Free RAM` / `Used RAM` lines from before and ~2 minutes after a reboot, or the diff table from `--measure after`.
+      render: text
+  - type: textarea
+    id: removed
+    attributes:
+      label: Packages removed
+      description: One per line. The restore file from the scripts lists them too (remove the IP from it first).
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: broke
+    attributes:
+      label: Anything that stopped working?
+      description: Home button, inputs, Live TV, remote mic, casting, apps... Write "nothing" if all is well.
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Number of Android users (`pm list users`), firmware quirks, how much faster it feels.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy
+      options:
+        - label: I removed IP addresses, serials and account info from everything I pasted.
+          required: true
+        - label: I agree that what I post here is licensed under the project's MIT License (see CONTRIBUTING.md).
+          required: true
