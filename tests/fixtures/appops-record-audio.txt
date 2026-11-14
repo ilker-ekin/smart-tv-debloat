@@ -1,0 +1,9 @@
+Current AppOps Service state:
+  Settings:
+    top_state_settle_time=+30s0ms
+  Uid 10045:
+    state=cch
+    RECORD_AUDIO: mode=foreground
+    Package com.google.android.katniss:
+      RECORD_AUDIO (allow):
+        Access: [fg-s] 2026-01-01 00:00:00.000 (-225d21h26m3s120ms) duration=+4s210ms
