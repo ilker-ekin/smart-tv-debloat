@@ -267,7 +267,7 @@ function Set-AnimationTweak {
 function Invoke-Restore([string]$File) {
     if (-not (Test-Path -LiteralPath $File)) { Fail "restore file not found: $File" 2 }
     # Only replay lines we know we wrote; never execute arbitrary content from the file.
-    $re = '^adb -s (\S+) shell ((cmd package install-existing|pm enable) --user \d+ [\w.]+|settings (put global \w+ [\d.]+|delete global \w+))$'
+    $re = '^adb -s ([A-Za-z0-9.:_-]+) shell ((cmd package install-existing|pm enable) --user \d+ [\w.]+|settings (put global \w+ [\d.]+|delete global \w+))$'
     $cmds = @(Get-Content -LiteralPath $File | ForEach-Object { $_.TrimEnd("`r") } | Where-Object { $_ -match $re })
     if (-not $cmds.Count) { Fail "no restore commands found in $File" }
     $first = [regex]::Match($cmds[0], $re).Groups[1].Value

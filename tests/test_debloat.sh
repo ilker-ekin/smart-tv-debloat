@@ -138,6 +138,10 @@ restore_replays_only_known_lines() {
     printf 'adb -s 192.168.1.50:5555 shell pm enable --user 0 com.tcl.esticker\r\n'   # CRLF line from a .ps1 undo file
     echo 'adb -s 192.168.1.50:5555 shell rm -rf /sdcard'
     echo 'touch /tmp/pwned; adb -s 192.168.1.50:5555 shell pm enable --user 0 x.y'
+    # tabs in the target must not smuggle extra words into the TV command (security review finding)
+    printf 'adb -s a	b	rm	-rf	/sdcard/Download;	id	# shell pm enable --user 0 com.x
+'
+    echo 'adb -s 192.168.1.50:5555;reboot shell pm enable --user 0 com.y'
   } > "$f"
   run_debloat '' -- --restore "$f"
   check '[ "$CODE" = 0 ]'
@@ -145,6 +149,9 @@ restore_replays_only_known_lines() {
   check '[ "$(log_count "pm enable --user 0 com\.tcl\.esticker")" = 1 ]'
   check '! log_has "rm -rf"'
   check '! log_has "x\.y"'
+  check '! log_has "Download|com\.x|com\.y| id"'
+  check '[ "$(printf "%s
+" "$LOG" | grep -c " shell ")" = 2 ]'
 }
 
 tier3_always_asks() {

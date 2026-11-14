@@ -141,12 +141,16 @@ Describe '-Restore' {
             'adb -s 192.168.1.50:5555 shell pm enable --user 0 com.tcl.esticker'
             'adb -s 192.168.1.50:5555 shell rm -rf /sdcard'
             'Remove-Item C:\ -Recurse'
+            "adb -s a`tb`trm`t-rf`t/sdcard/Download;`tid`t# shell pm enable --user 0 com.x"
+            'adb -s 192.168.1.50:5555;reboot shell pm enable --user 0 com.y'
         )
         $r = Invoke-Debloat -ScriptArgs @('-Restore', $f)
         $r.Code | Should -Be 0
         @($r.Log | Where-Object { $_ -match 'install-existing --user 0 com\.tcl\.guard' }).Count | Should -Be 1
         @($r.Log | Where-Object { $_ -match 'pm enable --user 0 com\.tcl\.esticker' }).Count | Should -Be 1
         @($r.Log | Where-Object { $_ -match 'rm -rf' }) | Should -BeNullOrEmpty
+        @($r.Log | Where-Object { $_ -match 'Download|com\.x|com\.y' }) | Should -BeNullOrEmpty
+        @($r.Log | Where-Object { $_ -match ' shell ' }).Count | Should -Be 2
     }
 }
 

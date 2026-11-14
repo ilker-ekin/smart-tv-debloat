@@ -271,20 +271,25 @@ apply_tweaks() {
 
 # Only replay lines we know we wrote; never execute arbitrary content from the file.
 # Same line format as the .ps1 undo files, so either script can replay either file.
-RESTORE_RE='^adb -s ([^ ]+) shell ((cmd package install-existing|pm enable) --user [0-9]+ [A-Za-z0-9_.]+|settings (put global [A-Za-z0-9_]+ [0-9.]+|delete global [A-Za-z0-9_]+))$'
+# The target is limited to address characters, and only the command part (group 2) is ever sent to the TV:
+# the line itself is never re-split, so tabs or shell characters in a crafted file can't add arguments.
+RESTORE_RE='^adb -s ([A-Za-z0-9.:_-]+) shell ((cmd package install-existing|pm enable) --user [0-9]+ [A-Za-z0-9_.]+|settings (put global [A-Za-z0-9_]+ [0-9.]+|delete global [A-Za-z0-9_]+))$'
 
 do_restore() {
   [ -f "$1" ] || fail "restore file not found: $1" 2
-  local cmds first line okc=0 bad=0
+  local cmds first line okc=0 bad=0 args
   cmds="$(tr -d '\r' < "$1" | grep -E "$RESTORE_RE")"
   [ -n "$cmds" ] || fail "no restore commands found in $1"
   first="$(printf '%s\n' "$cmds" | head -n 1 | awk '{ print $3 }')"
   [ -n "$IP" ] || IP="$first"
   connect_tv
   while IFS= read -r line; do
-    # shellcheck disable=SC2086  # word splitting is intended: line matched RESTORE_RE
-    set -- $line
-    shift 4   # drop: adb -s <target> shell
+    [[ $line =~ $RESTORE_RE ]] || continue
+    # Split only the whitelisted command (group 2) on single spaces, with globbing off.
+    set -f
+    IFS=' ' read -r -a args <<< "${BASH_REMATCH[2]}"
+    set +f
+    set -- "${args[@]}"
     if [ "$DRY" = 1 ]; then say "  [dry-run] $*"; continue; fi
     tv "$@"
     case "$ADB_EXIT:$ADB_OUT" in
