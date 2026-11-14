@@ -342,11 +342,12 @@ The reference TV's numbers are in [RESULTS.md](RESULTS.md).
 
 ⏱ ~2 min · read-only: it changes nothing on the TV
 
-Download this repository (**Code → Download ZIP** on GitHub) and extract it, e.g. to `C:\tv-debloat-android-google`. Then,
+Download this repository (**Code → Download ZIP** on GitHub) and extract it to `C:\`. The ZIP contains a
+`smart-tv-debloat-main` folder: rename it to `C:\smart-tv-debloat`. Then,
 still in your `%USERPROFILE%\tcl-tv` window:
 
 ```cmd
-C:\tv-debloat-android-google\scripts\privacy-audit.bat %T%
+C:\smart-tv-debloat\scripts\privacy-audit.bat %T%
 ```
 
 ✅ **You should see** the report scroll by, ending with

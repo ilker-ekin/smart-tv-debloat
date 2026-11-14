@@ -18,7 +18,7 @@ embeds it, so the repo stays readable without images.
 
 | File | Alt text | Text fallback |
 |---|---|---|
-| `hero-banner.png` | tv-debloat-android-google: Make a slow Android TV / Google TV fast and private again, reversibly. No root, fully reversible, about 20 minutes. | The README's first paragraph |
+| `hero-banner.png` | smart-tv-debloat: Make a slow Android TV / Google TV fast and private again, reversibly. No root, fully reversible, about 20 minutes. | The README's first paragraph |
 | `how-it-works.png` | How it works: a wired PC and a Wi-Fi TV on the same router connect over ADB on port 5555; then debloat, tweaks and reboot, privacy audit, optional launcher, and finally turn debugging off. | Mermaid block below |
 | `step-01-enable-developer-options.png` | Step 1: Enable Developer options, about 2 minutes | Step heading |
 | `step-02-install-adb.png` | Step 2: Install ADB, about 3 minutes | Step heading |

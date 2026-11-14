@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/assets/hero-banner.png" width="1000" alt="tv-debloat-android-google: Make a slow Android TV / Google TV fast and private again, reversibly. No root, fully reversible, about 20 minutes.">
+  <img src="docs/assets/hero-banner.png" width="1000" alt="smart-tv-debloat: Make a slow Android TV / Google TV fast and private again, reversibly. No root, fully reversible, about 20 minutes.">
 </p>
 
-**tv-debloat-android-google** removes the preinstalled apps that eat the RAM of Android TV / Google TV sets, speeds up
+**smart-tv-debloat** removes the preinstalled apps that eat the RAM of Android TV / Google TV sets, speeds up
 the menus, and checks who can use the microphone. It uses only the official **ADB** tool: no root, no hacks, and
 every change can be undone. It's for anyone whose Android TV has become sluggish, whether you'd rather copy-paste
 commands in Windows `cmd` or run one script.
@@ -60,11 +60,11 @@ Which apps can use the microphone, when they last did, and whether anything is r
 **Windows (PowerShell 5.1 or 7)**, with [Platform Tools](docs/WALKTHROUGH.md#step-2-install-adb) installed:
 
 ```powershell
-git clone https://github.com/ilker-ekin/tv-debloat-android-google
+git clone https://github.com/ilker-ekin/smart-tv-debloat
 ```
 
 ```powershell
-cd tv-debloat-android-google
+cd smart-tv-debloat
 ```
 
 ```powershell
@@ -85,7 +85,7 @@ brew install android-platform-tools        # macOS; Debian/Ubuntu: sudo apt inst
 ```
 
 ```sh
-git clone https://github.com/ilker-ekin/tv-debloat-android-google && cd tv-debloat-android-google
+git clone https://github.com/ilker-ekin/smart-tv-debloat && cd smart-tv-debloat
 ```
 
 ```sh
