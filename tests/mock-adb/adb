@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# Mock adb for the bash tests. Put this folder first on PATH. Never talks to a device.
+# Same env knobs and fixtures as adb.ps1 (see there). Logs every call to $MOCK_ADB_LOG.
+#
+# Unlike adb.ps1 this runs as its own process, so it can reproduce the real
+# stdin-swallow bug: every `adb shell` call reads and discards stdin, exactly like
+# adb does when you paste several lines into a terminal. A script that forgets
+# `< /dev/null` loses the user's y/N answers and the tests fail.
+
+fx="${MOCK_ADB_FIXTURES:-$(cd "$(dirname "$0")/../fixtures" && pwd)}"
+[ -z "${MOCK_ADB_LOG:-}" ] || printf '%s\n' "$*" >> "$MOCK_ADB_LOG"
+
+out() {   # print lines, optionally as CRLF
+  if [ "${MOCK_ADB_CRLF:-}" = 1 ]; then sed 's/$/\r/'; else cat; fi
+}
+fixture() { out < "$fx/$1"; }
+in_list() { printf '%s\n' "$2" | tr ',' '\n' | grep -qxF -- "$1"; }
+
+while [ "${1:-}" = "-s" ]; do shift 2; done
+verb="${1:-}"; [ $# -gt 0 ] && shift
+
+case "$verb" in
+  version) echo 'Android Debug Bridge version 1.0.41 (mock)' | out; exit 0 ;;
+  connect)
+    case "${MOCK_ADB_CONNECT:-ok}" in
+      10060) echo "failed to connect to '$1': A connection attempt failed (10060)" | out; exit 1 ;;
+      10061) echo "failed to connect to '$1': No connection could be made because the target machine actively refused it. (10061)" | out; exit 1 ;;
+      *) echo "connected to $1" | out; exit 0 ;;
+    esac ;;
+  devices) printf 'List of devices attached\n%s\t%s\n\n' "${MOCK_ADB_TARGET:-192.168.1.50:5555}" "${MOCK_ADB_STATE:-device}" | out; exit 0 ;;
+  get-state)
+    s="${MOCK_ADB_STATE:-device}"
+    [ "$s" = device ] && { echo device | out; exit 0; }
+    echo "error: device $s" >&2; exit 1 ;;
+  reboot) exit 0 ;;
+  shell) [ -t 0 ] || cat > /dev/null ;;   # swallow stdin, like the real thing
+  *) echo "mock adb: unsupported: $verb $*" >&2; exit 1 ;;
+esac
+
+cmd="$*"
+last="${*: -1}"
+case "$cmd" in
+  "pm list users"*) fixture "${MOCK_ADB_USERS:-users.txt}" ;;
+  "am get-current-user"*) echo "${MOCK_ADB_CURRENT_USER:-0}" | out ;;
+  "pm list packages"*) fixture packages.txt ;;
+  "dumpsys meminfo"*) fixture "${MOCK_ADB_MEMINFO:-meminfo-before.txt}" ;;
+  "dumpsys appops"*) fixture "${MOCK_ADB_APPOPS:-appops-record-audio.txt}" ;;
+  "getprop ro.product.name"*) echo G07_4K_GB_NF | out ;;
+  "getprop ro.product.device"*) echo mock_device | out ;;
+  "getprop ro.build.fingerprint"*) echo 'TCL/mock/mock:11/RP1A.200622.001/AR17:user/release-keys' | out ;;
+  "settings get "*)
+    # shellcheck disable=SC2086  # split "settings get <ns> <key>" into words on purpose
+    set -- $cmd; key="$3 $4="; val=null
+    if [ -n "${MOCK_ADB_SETTINGS:-}" ]; then
+      hit="$(grep -m1 -F -- "$key" "$fx/$MOCK_ADB_SETTINGS" | sed -n "s/^$key//p")"
+      grep -qF -- "$key" "$fx/$MOCK_ADB_SETTINGS" && val="$hit"
+    fi
+    printf '%s\n' "$val" | out ;;
+  "settings put "*|"settings delete "*) ;;
+  "pm uninstall"*)
+    if in_list "$last" "${MOCK_ADB_FAIL_UNINSTALL:-}"; then echo 'Failure [DELETE_FAILED_INTERNAL_ERROR]' | out
+    else echo Success | out; fi ;;
+  "pm disable-user"*)
+    if in_list "$last" "${MOCK_ADB_FAIL_DISABLE:-}"; then
+      echo "Error: java.lang.SecurityException: Cannot disable a protected package: $last" | out; exit 255
+    fi
+    echo "Package $last new state: disabled-user" | out ;;
+  "cmd package install-existing"*|"pm install-existing"*) echo "Package $last installed for user: 0" | out ;;
+  "pm enable"*) echo "Package $last new state: enabled" | out ;;
+esac
+exit 0
