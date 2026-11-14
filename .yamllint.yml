@@ -1,0 +1,14 @@
+extends: default
+rules:
+  document-start: disable
+  line-length:
+    max: 160
+  # packages.yaml aligns one-line entries for readability
+  commas:
+    max-spaces-after: -1
+  braces:
+    max-spaces-inside: 1
+  comments:
+    min-spaces-from-content: 1
+  truthy:
+    check-keys: false   # GitHub Actions uses `on:`

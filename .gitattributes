@@ -1,0 +1,16 @@
+# Normalise line endings so scripts work on every OS.
+* text=auto
+*.sh    text eol=lf
+*.bats  text eol=lf
+*.tsv   text eol=lf
+*.yaml  text eol=lf
+*.yml   text eol=lf
+*.py    text eol=lf
+# cmd.exe mis-parses labels/blocks in LF-only batch files
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+*.svg   text eol=lf
+*.png   binary
+# Mock adb for bash tests (no extension, must stay LF)
+tests/mock-adb/adb text eol=lf
