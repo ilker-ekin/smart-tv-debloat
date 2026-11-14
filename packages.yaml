@@ -1,0 +1,260 @@
+# Single source of truth for what the scripts offer to remove.
+#
+# Fields (all required; use "" or [] when empty):
+#   package      Android package name
+#   name         human name
+#   description  what it is ("TODO(device)" if unconfirmed)
+#   tier         1 = safe for almost everyone, 2 = probably safe, test after,
+#                3 = user choice (scripts ALWAYS prompt, even with --yes)
+#   risk         safe | caution | breaks-feature
+#   breaks       what stops working after removal ("" = nothing known)
+#   verified_on  device ids (see `devices`) where removal was done and the TV kept working.
+#                [] = not verified on any device yet.
+#
+# Never add anything from the DENYLIST at the bottom. The scripts refuse
+# denylisted packages in code, and `python tools/packages.py check` fails CI.
+#
+# After editing, regenerate the bash-readable copy:
+#   python tools/packages.py gen
+
+schema_version: 1
+
+devices:
+  - id: G07_4K_GB_NF
+    platform: Android TV 11
+    build: RP1A.200622.001/AR17
+    ram: 2 GB
+
+packages:
+  # ---------- Tier 1: TCL bloat ----------
+  - package: com.tcl.guard
+    name: TCL Guard
+    description: "'Cleaner' app; runs in background, Android already manages memory"
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+  - package: com.tcl.esticker
+    name: E-Sticker
+    description: Store demo overlay
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+  - package: com.tcl.smartalexa
+    name: Alexa integration
+    description: Amazon Alexa hooks
+    tier: 1
+    risk: safe
+    breaks: Alexa control of the TV
+    verified_on: [G07_4K_GB_NF]
+  - package: com.tcl.notereminder
+    name: Note reminder
+    description: Reminder app
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+  - package: com.tcl.messagebox
+    name: Message box
+    description: TCL notices and promotions
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+  - package: com.tcl.hotelmenu
+    name: Hotel menu
+    description: Hotel/commercial mode
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+  - package: com.tcl.channelplus
+    name: TCL Channel
+    description: Ad-supported free streaming channels (not broadcast TV)
+    tier: 1
+    risk: safe
+    breaks: TCL Channel app
+    verified_on: [G07_4K_GB_NF]
+  - package: com.tcl.usercenter
+    name: TCL account
+    description: TCL user account
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+  - package: com.tcl.browser
+    name: TCL browser
+    description: Built-in web browser
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+  - package: com.tcl.gallery
+    name: TCL gallery
+    description: Photo viewer (USB media still works via ui_mediaCenter)
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+
+  # ---------- Tier 1: Google / AOSP extras ----------
+  - package: com.google.android.youtube.tvmusic
+    name: YouTube Music
+    description: ""
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+  - package: com.google.android.play.games
+    name: Play Games
+    description: ""
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+  - package: com.google.android.videos
+    name: Google Play Movies
+    description: ""
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+  - package: com.google.android.feedback
+    name: Feedback
+    description: Crash/feedback reporter
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+  - package: com.google.android.marvin.talkback
+    name: TalkBack
+    description: Screen reader
+    tier: 1
+    risk: safe
+    breaks: Accessibility screen reader
+    verified_on: [G07_4K_GB_NF]
+  - package: com.google.android.apps.tv.dreamx
+    name: Ambient mode
+    description: Photo/feed screensaver; basic screensaver remains
+    tier: 1
+    risk: safe
+    breaks: Ambient screensaver
+    verified_on: [G07_4K_GB_NF]
+  - package: com.android.printspooler
+    name: Print spooler
+    description: ""
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+  - package: com.android.wallpaper.livepicker
+    name: Live wallpaper picker
+    description: ""
+    tier: 1
+    risk: safe
+    breaks: ""
+    verified_on: [G07_4K_GB_NF]
+
+  # ---------- Tier 2: probably safe, test after ----------
+  - package: com.tcl.waterfall.overseas
+    name: TCL content feed
+    description: TCL home content rows
+    tier: 2
+    risk: caution
+    breaks: "TODO(device): confirm Home and Input buttons still work"
+    verified_on: []
+  - package: com.tcl.MultiScreenInteraction_TV
+    name: T-Cast
+    description: Screen mirroring from the TCL phone app
+    tier: 2
+    risk: breaks-feature
+    breaks: T-Cast mirroring
+    verified_on: [G07_4K_GB_NF]
+
+  # ---------- Tier 3: user choice ----------
+  - package: com.google.android.katniss
+    name: Google Assistant (core)
+    description: ""
+    tier: 3
+    risk: breaks-feature
+    breaks: Voice search / remote mic button
+    verified_on: []
+  - package: com.google.android.tv.assistant
+    name: Google Assistant (TV)
+    description: ""
+    tier: 3
+    risk: breaks-feature
+    breaks: Voice search / remote mic button
+    verified_on: []
+  - package: com.tcl.assistant
+    name: TCL voice assistant
+    description: ""
+    tier: 3
+    risk: caution
+    breaks: "TODO(device): test remote mic button"
+    verified_on: []
+  # Listed by earlier versions of the script but never seen or tested on a real TV.
+  # Purpose and side effects are unconfirmed; they stay tier 3 so they are always prompted.
+  - package: com.tcl.copydatatotv
+    name: Copy data to TV
+    description: "TODO(device): purpose unconfirmed"
+    tier: 3
+    risk: caution
+    breaks: "TODO(device)"
+    verified_on: []
+  - package: com.tcl.tvweishi
+    name: TCL TV helper (tvweishi)
+    description: "TODO(device): purpose unconfirmed"
+    tier: 3
+    risk: caution
+    breaks: "TODO(device)"
+    verified_on: []
+  - package: com.google.android.tvrecommendations
+    name: TV recommendations service
+    description: "TODO(device): purpose unconfirmed on this firmware"
+    tier: 3
+    risk: caution
+    breaks: "TODO(device): check that home-screen rows still load"
+    verified_on: []
+
+  # Third-party apps preinstalled by region; remove the ones you don't use.
+  # verified_on = removed on that TV without side effects. [] = kept on the reference TV.
+  - {package: com.disney.disneyplus,   name: Disney+,     description: "", tier: 3, risk: safe, breaks: "", verified_on: [G07_4K_GB_NF]}
+  - {package: com.dsmart.blu.android,  name: D-Smart BLU, description: "", tier: 3, risk: safe, breaks: "", verified_on: [G07_4K_GB_NF]}
+  - {package: tv.wuaki.apptv,          name: Rakuten TV,  description: "", tier: 3, risk: safe, breaks: "", verified_on: [G07_4K_GB_NF]}
+  - {package: au.com.stan.and,         name: Stan,        description: "Australia-only", tier: 3, risk: safe, breaks: "", verified_on: [G07_4K_GB_NF]}
+  - {package: com.amazon.amazonvideo.livingroom, name: Prime Video, description: "", tier: 3, risk: safe, breaks: "", verified_on: []}
+  - {package: com.wbd.stream,          name: HBO Max,     description: "", tier: 3, risk: safe, breaks: "", verified_on: []}
+  - {package: com.spotify.tv.android,  name: Spotify,     description: "", tier: 3, risk: safe, breaks: "", verified_on: []}
+
+# Scripts must refuse these even if someone adds them above.
+denylist:
+  - com.google.android.apps.tv.launcherx      # Home screen
+  - com.google.android.tungsten.setupwraith   # Setup; breaks Home on some firmware
+  - com.google.android.gms
+  - com.google.android.gsf
+  - com.android.vending                       # Play Store
+  - com.google.android.webview
+  - com.google.android.apps.mediashell        # Chromecast built-in
+  - com.android.providers.tv                  # Live TV channel DB
+  - com.tcl.tv                                # Live TV
+  - com.tcl.tvinput
+  - com.tcl.system.server
+  - com.tcl.settings
+  - com.tcl.dashboard                         # Quick settings panel
+  - com.tcl.partnercustomizer
+  - com.tcl.providers.config
+  - com.tcl.keyhelp
+  - com.tcl.autopair                          # Remote pairing
+  - com.tcl.micmanager                        # Remote mic
+  - com.tcl.ui_mediaCenter                    # USB media
+  - com.tcl.miracast
+  - com.tcl.ttvs
+  - com.tcl.suspension
+  - com.tcl.factory.view
+  - com.tcl.initsetup
+  - com.tcl.useragreement
+  - com.tvos
+  - com.android.systemui
+  - com.android.tv.settings

@@ -1,0 +1,63 @@
+# GENERATED from packages.yaml by `python tools/packages.py gen`. Do not edit by hand.
+kind	package	tier	risk	name	breaks	verified_on	description
+pkg	com.tcl.guard	1	safe	TCL Guard		G07_4K_GB_NF	'Cleaner' app; runs in background, Android already manages memory
+pkg	com.tcl.esticker	1	safe	E-Sticker		G07_4K_GB_NF	Store demo overlay
+pkg	com.tcl.smartalexa	1	safe	Alexa integration	Alexa control of the TV	G07_4K_GB_NF	Amazon Alexa hooks
+pkg	com.tcl.notereminder	1	safe	Note reminder		G07_4K_GB_NF	Reminder app
+pkg	com.tcl.messagebox	1	safe	Message box		G07_4K_GB_NF	TCL notices and promotions
+pkg	com.tcl.hotelmenu	1	safe	Hotel menu		G07_4K_GB_NF	Hotel/commercial mode
+pkg	com.tcl.channelplus	1	safe	TCL Channel	TCL Channel app	G07_4K_GB_NF	Ad-supported free streaming channels (not broadcast TV)
+pkg	com.tcl.usercenter	1	safe	TCL account		G07_4K_GB_NF	TCL user account
+pkg	com.tcl.browser	1	safe	TCL browser		G07_4K_GB_NF	Built-in web browser
+pkg	com.tcl.gallery	1	safe	TCL gallery		G07_4K_GB_NF	Photo viewer (USB media still works via ui_mediaCenter)
+pkg	com.google.android.youtube.tvmusic	1	safe	YouTube Music		G07_4K_GB_NF	
+pkg	com.google.android.play.games	1	safe	Play Games		G07_4K_GB_NF	
+pkg	com.google.android.videos	1	safe	Google Play Movies		G07_4K_GB_NF	
+pkg	com.google.android.feedback	1	safe	Feedback		G07_4K_GB_NF	Crash/feedback reporter
+pkg	com.google.android.marvin.talkback	1	safe	TalkBack	Accessibility screen reader	G07_4K_GB_NF	Screen reader
+pkg	com.google.android.apps.tv.dreamx	1	safe	Ambient mode	Ambient screensaver	G07_4K_GB_NF	Photo/feed screensaver; basic screensaver remains
+pkg	com.android.printspooler	1	safe	Print spooler		G07_4K_GB_NF	
+pkg	com.android.wallpaper.livepicker	1	safe	Live wallpaper picker		G07_4K_GB_NF	
+pkg	com.tcl.waterfall.overseas	2	caution	TCL content feed	TODO(device): confirm Home and Input buttons still work		TCL home content rows
+pkg	com.tcl.MultiScreenInteraction_TV	2	breaks-feature	T-Cast	T-Cast mirroring	G07_4K_GB_NF	Screen mirroring from the TCL phone app
+pkg	com.google.android.katniss	3	breaks-feature	Google Assistant (core)	Voice search / remote mic button		
+pkg	com.google.android.tv.assistant	3	breaks-feature	Google Assistant (TV)	Voice search / remote mic button		
+pkg	com.tcl.assistant	3	caution	TCL voice assistant	TODO(device): test remote mic button		
+pkg	com.tcl.copydatatotv	3	caution	Copy data to TV	TODO(device)		TODO(device): purpose unconfirmed
+pkg	com.tcl.tvweishi	3	caution	TCL TV helper (tvweishi)	TODO(device)		TODO(device): purpose unconfirmed
+pkg	com.google.android.tvrecommendations	3	caution	TV recommendations service	TODO(device): check that home-screen rows still load		TODO(device): purpose unconfirmed on this firmware
+pkg	com.disney.disneyplus	3	safe	Disney+		G07_4K_GB_NF	
+pkg	com.dsmart.blu.android	3	safe	D-Smart BLU		G07_4K_GB_NF	
+pkg	tv.wuaki.apptv	3	safe	Rakuten TV		G07_4K_GB_NF	
+pkg	au.com.stan.and	3	safe	Stan		G07_4K_GB_NF	Australia-only
+pkg	com.amazon.amazonvideo.livingroom	3	safe	Prime Video			
+pkg	com.wbd.stream	3	safe	HBO Max			
+pkg	com.spotify.tv.android	3	safe	Spotify			
+deny	com.google.android.apps.tv.launcherx						
+deny	com.google.android.tungsten.setupwraith						
+deny	com.google.android.gms						
+deny	com.google.android.gsf						
+deny	com.android.vending						
+deny	com.google.android.webview						
+deny	com.google.android.apps.mediashell						
+deny	com.android.providers.tv						
+deny	com.tcl.tv						
+deny	com.tcl.tvinput						
+deny	com.tcl.system.server						
+deny	com.tcl.settings						
+deny	com.tcl.dashboard						
+deny	com.tcl.partnercustomizer						
+deny	com.tcl.providers.config						
+deny	com.tcl.keyhelp						
+deny	com.tcl.autopair						
+deny	com.tcl.micmanager						
+deny	com.tcl.ui_mediaCenter						
+deny	com.tcl.miracast						
+deny	com.tcl.ttvs						
+deny	com.tcl.suspension						
+deny	com.tcl.factory.view						
+deny	com.tcl.initsetup						
+deny	com.tcl.useragreement						
+deny	com.tvos						
+deny	com.android.systemui						
+deny	com.android.tv.settings						
