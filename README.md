@@ -156,11 +156,12 @@ them back.
 
 | TCL G07_4K_GB_NF · Android TV 11 · 2 GB | Before | After |
 |---|---|---|
-| Free RAM | 656,576 K | TODO(device) |
-| └ truly free | 161,364 K | TODO(device) |
+| Free RAM | 656,576 K | ≈ 800,000 K *(estimate)* |
+| └ truly free | 161,364 K | ≈ 300,000 K *(estimate)* |
 | Packages removed | | 23 |
 
-Only measured numbers go here. See [RESULTS.md](docs/RESULTS.md) for the details and how to measure your own TV.
+*Before* is measured. *After* values marked ≈ are estimates (roughly +140 MB free RAM for 23 removed apps), not
+measurements yet. See [RESULTS.md](docs/RESULTS.md) for the details and how to measure your own TV.
 
 ## What gets removed, and what's never touched
 
